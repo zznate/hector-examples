@@ -1,5 +1,5 @@
 # Overview
-Provides example classes for using Hector to access Apache Cassandra
+Provides example classes for using Hector to access Apache Cassandra (0.6.2)
 
 The classes in com.vrvm.cassandra.hector.example package can all be executed
 from maven via the following command:
