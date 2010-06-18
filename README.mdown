@@ -1,0 +1,8 @@
+# Overview
+Provides example classes for using Hector to access Apache Cassandra
+
+The classes in com.vrvm.cassandra.hector.example package can all be executed
+from maven via the following command:
+mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.[class name]"
+
+These classes assume you have an instance of Cassandra running on localhost:9160 with the default configuration. 
