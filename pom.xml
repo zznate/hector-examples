@@ -168,35 +168,35 @@
 							<file>${basedir}/lib/cassandra-javautils.jar</file>
 						</configuration>
 					</execution>
-                    <execution>
-                        <id>install hector</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <packaging>jar</packaging>
-                            <groupId>me.prettyprint</groupId>
-                            <artifactId>hector</artifactId>
-                            <version>0.6.0-15</version>
-                            <file>${basedir}/lib/hector-0.6.0-15.jar</file>
-                        </configuration>
-                    </execution>					
+					<execution>
+						<id>install hector</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<packaging>jar</packaging>
+							<groupId>me.prettyprint</groupId>
+							<artifactId>hector</artifactId>
+							<version>0.6.0-15</version>
+							<file>${basedir}/lib/hector-0.6.0-15.jar</file>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<!-- mvn exec:java -Dexec.mainClass="com.example.Main" -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
