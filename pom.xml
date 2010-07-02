@@ -8,6 +8,10 @@
 	<packaging>jar</packaging>
 	<name>hector-examples</name>
 
+    <properties>
+        <hector.version>0.6.0-15</hector.version>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -40,7 +44,7 @@
 		<dependency>
 			<groupId>me.prettyprint</groupId>
 			<artifactId>hector</artifactId>
-			<version>0.6.0-15</version>
+			<version>${hector.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -178,8 +182,8 @@
 							<packaging>jar</packaging>
 							<groupId>me.prettyprint</groupId>
 							<artifactId>hector</artifactId>
-							<version>0.6.0-15</version>
-							<file>${basedir}/lib/hector-0.6.0-15.jar</file>
+							<version>0.6.0-14</version>
+							<file>${basedir}/lib/hector-${hector.version}.jar</file>
 						</configuration>
 					</execution>
 				</executions>
