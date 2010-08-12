@@ -11,6 +11,7 @@ import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
 
 import org.apache.cassandra.thrift.Column;
+import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * Uses BatchMutation from a use case off of hector-users
@@ -36,34 +37,31 @@ public class FromUsersBatchMutate {
             int counter = 0;
             for (int i = 0; i <= 25000; i++) {
                 for (int j = 0; j < 5; j++) {
-                    Column lang = new
-                    Column(StringUtils.bytes("language_" + j),
+                    Column lang = new Column(StringUtils.bytes("language_" + j),
                             StringUtils.bytes("English"),
                             keyspace.createTimestamp());
-                    batchMutation.addInsertion((counter+"_key"), columnFamilies, lang);
-                    Column query = new
-                    Column(StringUtils.bytes("query_" + j),
+                    String key = String.format("%d_key_%s", counter, RandomStringUtils.randomAlphanumeric(6));
+                    batchMutation.addInsertion(key, columnFamilies, lang);
+                    Column query = new Column(StringUtils.bytes("query_" + j),
                             StringUtils.bytes("search for Auto CAD_" +
                                     i), keyspace.createTimestamp());
-                    batchMutation.addInsertion((counter+"_key"),
+                    batchMutation.addInsertion(key,
                             columnFamilies, query);
                     Column url = new Column(StringUtils.bytes("url_" +
                             j),
                             StringUtils.bytes("www.autodesk.com"),
                             keyspace.createTimestamp());
-                    batchMutation.addInsertion((counter+"_key"),
+                    batchMutation.addInsertion(key,
                             columnFamilies, url);
-                    Column authorCol = new
-                    Column(StringUtils.bytes("position_" + j),
+                    Column authorCol = new Column(StringUtils.bytes("position_" + j),
                             StringUtils.bytes(String.valueOf(i)),
                             keyspace.createTimestamp());
-                    batchMutation.addInsertion((counter+"_key"),
+                    batchMutation.addInsertion(key,
                             columnFamilies, authorCol);
-                    Column userId = new
-                    Column(StringUtils.bytes("userId_" + j),
+                    Column userId = new Column(StringUtils.bytes("userId_" + j),
                             StringUtils.bytes("bandops_" + i),
                             keyspace.createTimestamp());
-                    batchMutation.addInsertion((counter+"_key"),
+                    batchMutation.addInsertion(key,
                             columnFamilies, userId);
                 }
                 
