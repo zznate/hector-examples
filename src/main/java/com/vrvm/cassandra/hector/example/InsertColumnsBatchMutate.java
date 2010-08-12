@@ -60,6 +60,10 @@ public class InsertColumnsBatchMutate {
             
             System.out.println("Read from cassandra: " + cols);            
             System.out.println("Verify on CLI with:  get Keyspace1.Standard1['jsmith'] ");
+            
+            int count = keyspace.getCount("jsmith", columnParent);
+
+            System.out.println("Count has: " + count);
 
         } finally {
             pool.releaseClient(keyspace.getClient());
