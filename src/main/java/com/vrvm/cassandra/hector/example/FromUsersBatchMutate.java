@@ -14,7 +14,8 @@ import org.apache.cassandra.thrift.Column;
 import org.apache.commons.lang.RandomStringUtils;
 
 /**
- * Uses BatchMutation from a use case off of hector-users
+ * Uses BatchMutation from a use case off of hector-users@googlegroups.com
+ * Original author: Shamik Bandopadhyay
  *  
  * To run this example from maven:
  * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.FromUsersBatchMutate"
