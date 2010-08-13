@@ -5,6 +5,7 @@ Most of these examples were inspired by the same questions appearing reapeatedly
 hector-users@googlegroups.com
 
 The goals for each of these classes are: 
+
 * be completely atomic
 * be as simple as possible 
 * have minimal dependencies 
