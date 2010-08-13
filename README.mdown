@@ -1,15 +1,15 @@
 Overview
 ============
 Provides example classes for using Hector to access Apache Cassandra (0.6.2).
-Most of these examples were inspired by the same questions appearing reapeatedly on: 
-hector-users@googlegroups.com
+These examples were inspired by the same questions appearing reapeatedly on: 
+hector-users@googlegroups.com from users with a big variance in skill level. 
 
 The goals for each of these classes are: 
 
 * be completely atomic
 * be as simple as possible 
 * have minimal dependencies 
-* demonstrating a specific API call with the Hector client 
+* demonstrate a specific API call with the Hector client 
 * sacrifice reuse and encapsulation for the sake of clarity
 
 
