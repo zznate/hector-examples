@@ -1,14 +1,15 @@
-# Overview
+Overview
+============
 Provides example classes for using Hector to access Apache Cassandra (0.6.2).
 Most of these examples were inspired by the same questions appearing reapeatedly on: 
 hector-users@googlegroups.com
 
 The goals for each of these classes are: 
-- be completely atomic
-- be as simple as possible 
-- have minimal dependencies 
-- demonstrating a specific API call with the Hector client 
-- sacrifice reuse and encapsulation for the sake of clarity
+* be completely atomic
+* be as simple as possible 
+* have minimal dependencies 
+* demonstrating a specific API call with the Hector client 
+* sacrifice reuse and encapsulation for the sake of clarity
 
 
 Each class can be directly executed via maven like so: 
@@ -17,8 +18,12 @@ mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.[class n
 
 These classes assume you have an instance of Cassandra running on localhost:9160 with the default configuration. 
 
-#Additional Sources of Information
+Additional Sources of Information
+----------------------------------
 Mail List: hector-users@googlegroups.com
+
 Hector Wiki: http://wiki.github.com/rantav/hector/
+
 Hector Doc at Riptano: http://www.riptano.com/sites/default/files/hector-api-for-cassandra.pdf
+
 
