@@ -16,7 +16,7 @@ import org.apache.cassandra.thrift.SuperColumn;
  * Like {@link InsertSingleColumn} except with a SuperColumn 
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.InsertSuperColumn"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.InsertSuperColumn"
  * 
  * @author zznate
  *

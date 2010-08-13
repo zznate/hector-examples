@@ -14,7 +14,7 @@ import org.apache.cassandra.thrift.ColumnPath;
  * key "jsmith" in the Standard1 ColumnFamily 
  * 
  * To run this example from maven: 
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.InsertSingleColumn"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.InsertSingleColumn"
  * 
  * @author zznate
  *

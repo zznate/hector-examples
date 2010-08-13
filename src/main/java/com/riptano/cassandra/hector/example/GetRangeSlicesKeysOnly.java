@@ -23,7 +23,7 @@ import org.apache.cassandra.thrift.SliceRange;
  * For clear results, it's best to run this on an empty ColumnFamily.
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.GetRangeSlicesKeysOnly"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.GetRangeSlicesKeysOnly"
  * 
  * @author zznate
  *

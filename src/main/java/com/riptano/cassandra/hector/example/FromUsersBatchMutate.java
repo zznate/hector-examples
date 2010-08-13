@@ -18,7 +18,7 @@ import org.apache.commons.lang.RandomStringUtils;
  * Original author: Shamik Bandopadhyay
  *  
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.FromUsersBatchMutate"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.FromUsersBatchMutate"
  * 
  * @author zznate
  *

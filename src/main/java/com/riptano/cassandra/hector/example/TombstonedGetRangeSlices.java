@@ -22,7 +22,7 @@ import org.apache.cassandra.thrift.SliceRange;
  * get_range_slices and get_slice 
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.TombstonedGetRangeSlices"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.TombstonedGetRangeSlices"
  *  
  * @author zznate
  *

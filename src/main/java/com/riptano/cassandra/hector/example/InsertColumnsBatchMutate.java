@@ -21,7 +21,7 @@ import org.apache.cassandra.thrift.SliceRange;
  * to retrieve the rows.
  *  
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.InsertColumnsBatchMutate"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.InsertColumnsBatchMutate"
  * 
  * @author zznate
  *

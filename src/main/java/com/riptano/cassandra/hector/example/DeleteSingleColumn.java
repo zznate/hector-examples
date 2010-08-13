@@ -12,7 +12,7 @@ import org.apache.cassandra.thrift.ColumnPath;
  * Deletes the "first" Column for the key "jsmith" from Standard1 ColumnFamily.
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.DeleteSingleColumn"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.DeleteSingleColumn"
  * 
  * @author zznate
  */

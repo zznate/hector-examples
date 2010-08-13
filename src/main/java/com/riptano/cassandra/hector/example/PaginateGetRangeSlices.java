@@ -24,7 +24,7 @@ import org.apache.cassandra.thrift.SliceRange;
  * get_range_slices.
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.PaginateGetRangeSlices"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.PaginateGetRangeSlices"
  * 
  * @author zznate
  *

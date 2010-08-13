@@ -17,7 +17,7 @@ import org.apache.cassandra.thrift.SlicePredicate;
  * {@link InsertColumnsBatchMutate} example, leaving only the "first" column.
  * 
  * To run this example from maven:
- * mvn -e exec:java -Dexec.mainClass="com.vrvm.cassandra.hector.example.DeleteBatchMutate"
+ * mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.DeleteBatchMutate"
  * 
  * @author zznate
  *
