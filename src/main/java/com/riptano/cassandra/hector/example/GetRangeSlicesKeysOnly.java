@@ -1,4 +1,4 @@
-package com.vrvm.cassandra.hector.example;
+package com.riptano.cassandra.hector.example;
 
 import java.util.ArrayList;
 import java.util.List;

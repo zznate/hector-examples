@@ -1,4 +1,4 @@
-package com.vrvm.cassandra.hector.example;
+package com.riptano.cassandra.hector.example;
 
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
