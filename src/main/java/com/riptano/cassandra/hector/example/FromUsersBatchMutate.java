@@ -30,6 +30,7 @@ public class FromUsersBatchMutate {
         CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
         CassandraClient client = pool.borrowClient("localhost", 9160);
         Keyspace keyspace = null;
+        /*
         try {
             keyspace = client.getKeyspace("Keyspace1");
 
@@ -78,5 +79,6 @@ public class FromUsersBatchMutate {
         } finally {
             pool.releaseClient(keyspace.getClient());
         }
+        */
     }
 }

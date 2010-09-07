@@ -34,6 +34,7 @@ public class TombstonedGetRangeSlices {
         CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
         CassandraClient client = pool.borrowClient("localhost", 9160);
         Keyspace keyspace = null;
+        /*
         try {
             keyspace = client.getKeyspace("Keyspace1");
             // Insert 10 rows with 3 columns each of dummy data
@@ -96,5 +97,6 @@ public class TombstonedGetRangeSlices {
         } finally {
             pool.releaseClient(keyspace.getClient());
         }
+        */
     }
 }

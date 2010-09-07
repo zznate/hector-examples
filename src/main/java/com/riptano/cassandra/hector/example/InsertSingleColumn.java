@@ -1,8 +1,17 @@
 package com.riptano.cassandra.hector.example;
 
+import me.prettyprint.cassandra.model.ColumnQuery;
+import me.prettyprint.cassandra.model.HColumn;
+import me.prettyprint.cassandra.model.HFactory;
+import me.prettyprint.cassandra.model.HectorException;
+import me.prettyprint.cassandra.model.KeyspaceOperator;
+import me.prettyprint.cassandra.model.Mutator;
+import me.prettyprint.cassandra.model.Result;
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
+import me.prettyprint.cassandra.service.Cluster;
 import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
 
@@ -21,25 +30,26 @@ import org.apache.cassandra.thrift.ColumnPath;
  */
 public class InsertSingleColumn {
     
+    private static StringSerializer stringSerializer = StringSerializer.get();
+    
     public static void main(String[] args) throws Exception {
-        
-        CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
-        CassandraClient client = pool.borrowClient("localhost", 9160);
-        Keyspace keyspace = null;
-        try {
-            keyspace = client.getKeyspace("Keyspace1");
-            ColumnPath columnPath = new ColumnPath("Standard1");                                    
-            columnPath.setColumn(StringUtils.bytes("first"));
-            keyspace.insert("jsmith", columnPath, StringUtils.bytes("John"));
-            
-            Column col = keyspace.getColumn("jsmith", columnPath);
-            String columnValue = StringUtils.string(col.getValue());
-            
-            System.out.println("Read from cassandra: " + columnValue);            
-            System.out.println("Verify on CLI with:  get Keyspace1.Standard1['jsmith'] ");
+        Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        } finally {
-            pool.releaseClient(keyspace.getClient());
-        }
+        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        try {
+            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
+            mutator.insert("jsmith", "Standard1", HFactory.createStringColumn("first", "John"));
+            
+            ColumnQuery<String, String, String> columnQuery = HFactory.createStringColumnQuery(keyspaceOperator);
+            columnQuery.setColumnFamily("Standard1");
+            columnQuery.setKey("jsmith");
+            columnQuery.setName("first");
+            Result<HColumn<String, String>> result = columnQuery.execute();
+            System.out.println("Read HColumn from cassandra: " + result.get());            
+            System.out.println("Verify on CLI with:  get Keyspace1.Standard1['jsmith'] ");
+            
+        } catch (HectorException e) {
+            e.printStackTrace();
+        } 
     }
 }

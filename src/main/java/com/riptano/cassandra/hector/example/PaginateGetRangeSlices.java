@@ -1,23 +1,20 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.utils.StringUtils;
-
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import me.prettyprint.cassandra.model.HFactory;
+import me.prettyprint.cassandra.model.HectorException;
+import me.prettyprint.cassandra.model.KeyspaceOperator;
+import me.prettyprint.cassandra.model.Mutator;
+import me.prettyprint.cassandra.model.OrderedRows;
+import me.prettyprint.cassandra.model.RangeSlicesQuery;
+import me.prettyprint.cassandra.model.Result;
+import me.prettyprint.cassandra.model.Row;
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
-import me.prettyprint.cassandra.service.Keyspace;
-
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.thrift.ColumnPath;
-import org.apache.cassandra.thrift.KeyRange;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
+import me.prettyprint.cassandra.service.Cluster;
 
 /**
  * A simple example showing what it takes to page over results using
@@ -30,59 +27,54 @@ import org.apache.cassandra.thrift.SliceRange;
  *
  */
 public class PaginateGetRangeSlices {
+    
+    private static StringSerializer stringSerializer = StringSerializer.get();
+    
     public static void main(String[] args) throws Exception {
         
-        CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
-        CassandraClient client = pool.borrowClient("localhost", 9160);
-        Keyspace keyspace = null;
+        Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
+
+        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+                
         try {
-            keyspace = client.getKeyspace("Keyspace1");
-            // Insert 20 rows with 3 columns each of dummy data
-            for (int i = 0; i < 20; i++) {
-                ColumnPath cp = new ColumnPath("Standard1");
-                cp.setColumn(StringUtils.bytes("fake_column_0"));
-                keyspace.insert("fake_key_"+i, cp, StringUtils.bytes("fake_value_0_" + i));
-                
-                cp.setColumn(StringUtils.bytes("fake_column_1"));                
-                keyspace.insert("fake_key_"+i, cp, StringUtils.bytes("fake_value_1_" + i));
-                
-                cp.setColumn(StringUtils.bytes("fake_column_2"));
-                keyspace.insert("fake_key_"+i, cp, StringUtils.bytes("fake_value_2_" + i));
-            }
-            
-            ColumnParent columnParent = new ColumnParent("Standard1");                
-            SlicePredicate sp = new SlicePredicate();            
-            SliceRange sliceRange = new SliceRange(new byte[0], new byte[0], false, 3);
-            sp.setSlice_range(sliceRange);
-            
-            KeyRange keyRange = new KeyRange();
-            keyRange.setCount(11);            
-            keyRange.setStart_key("");
-            keyRange.setEnd_key("");
-            
-            Map<String, List<Column>> results = keyspace.getRangeSlices(columnParent, sp, keyRange);
+            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
 
-            Set<String> keySet = results.keySet();
-            String last = new ArrayDeque<String>(keySet).peekLast();
-            keySet.remove(last);
-            
-            System.out.println("first page:");
-            for (String key : keySet) {
-                System.out.println("result key:" + key + " results: " + results.get(key));
+            for (int i = 0; i < 20; i++) {            
+                mutator.addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_0", "fake_value_0_" + i))
+                .addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_1", "fake_value_1_" + i))
+                .addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_2", "fake_value_2_" + i));            
             }
-            // 
-            keyRange.setStart_key(last);            
-            results = keyspace.getRangeSlices(columnParent, sp, keyRange);
-            keySet = results.keySet();            
+            mutator.execute();
             
-            System.out.println("second page:");
-            for (String key : keySet) {
-                System.out.println("result key:" + key + " results: " + results.get(key));
+            RangeSlicesQuery<String, String, String> rangeSlicesQuery = 
+                HFactory.createRangeSlicesQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
+            rangeSlicesQuery.setColumnFamily("Standard1");            
+            rangeSlicesQuery.setKeys("", "");
+            rangeSlicesQuery.setRange("", "", false, 3);
+            
+            rangeSlicesQuery.setRowCount(11);
+            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            OrderedRows<String, String, String> orderedRows = result.get();
+            
+            List<Row<String,String,String>> rows = new ArrayList<Row<String,String,String>>(orderedRows.getList());
+            Row<String,String,String> lastRow = new ArrayDeque<Row<String,String,String>>(rows).peekLast();
+            rows.remove(lastRow);
+            System.out.println("Contents of rows: \n");                       
+            for (Row<String, String, String> r : rows) {
+                System.out.println("   " + r);
+            }
+            System.out.println("Should have 10 rows: " + rows.size());
+            
+            rangeSlicesQuery.setKeys(lastRow.getKey(), "");
+            orderedRows = rangeSlicesQuery.execute().get();
+            
+            System.out.println("2nd page Contents of rows: \n");
+            for (Row<String, String, String> row : orderedRows) {
+                System.out.println("   " + row);
             }
             
-
-        } finally {
-            pool.releaseClient(keyspace.getClient());
+        } catch (HectorException he) {
+            he.printStackTrace();
         }
     }
 
