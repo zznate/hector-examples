@@ -1,15 +1,28 @@
 package com.riptano.cassandra.hector.example;
 
+import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import me.prettyprint.cassandra.model.ColumnSlice;
 import me.prettyprint.cassandra.model.HectorException;
+import me.prettyprint.cassandra.model.KeyspaceOperator;
+import me.prettyprint.cassandra.model.Mutator;
+import me.prettyprint.cassandra.model.OrderedRows;
+import me.prettyprint.cassandra.model.RangeSlicesQuery;
+import me.prettyprint.cassandra.model.Result;
+import me.prettyprint.cassandra.model.Row;
+import me.prettyprint.cassandra.model.SliceQuery;
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
+import me.prettyprint.cassandra.service.Cluster;
 import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
+import me.prettyprint.hector.api.factory.HFactory;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnParent;
@@ -28,75 +41,72 @@ import org.apache.cassandra.thrift.SliceRange;
  *
  */
 public class TombstonedGetRangeSlices {
+    
+    private static StringSerializer stringSerializer = StringSerializer.get();
+    // - add data from mutator
+    // - delete the odd rows
+    // - display results
 
     public static void main(String[] args) throws Exception {
-        
-        CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
-        CassandraClient client = pool.borrowClient("localhost", 9160);
-        Keyspace keyspace = null;
-        /*
+        Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
+
+        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
         try {
-            keyspace = client.getKeyspace("Keyspace1");
-            // Insert 10 rows with 3 columns each of dummy data
-            ColumnPath cp = new ColumnPath("Standard1");
-            List<String> keySet = new ArrayList<String>(10);
-            for (int i = 0; i < 10; i++) {          
-                String key = "fake_key_" + i;
-                cp.setColumn(StringUtils.bytes("fake_column_0"));
-                keyspace.insert(key, cp, StringUtils.bytes("fake_value_0_" + i));
-                
-                cp.setColumn(StringUtils.bytes("fake_column_1"));                
-                keyspace.insert(key, cp, StringUtils.bytes("fake_value_1_" + i));
-                
-                cp.setColumn(StringUtils.bytes("fake_column_2"));
-                keyspace.insert(key, cp, StringUtils.bytes("fake_value_2_" + i));
-                keySet.add(key);
+            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
+            // add 10 rows
+            for (int i = 0; i < 10; i++) {            
+                mutator.addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_0", "fake_value_0_" + i))
+                .addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_1", "fake_value_1_" + i))
+                .addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_2", "fake_value_2_" + i));            
             }
-            cp.unsetColumn();
-            // now delete the odd rows
+            mutator.execute();
+            mutator.discardPendingMutations();
+            // delete the odd rows
             for (int i = 0; i < 10; i++) {
                 if ( i % 2 == 0 ) continue;
-                keyspace.remove("fake_key_"+i, cp);
+                mutator.addDeletion("fake_key_"+i, "Standard1", null, stringSerializer);             
             }
+            mutator.execute();
             
-            ColumnParent columnParent = new ColumnParent("Standard1");                
-            SlicePredicate sp = new SlicePredicate();
-            sp.addToColumn_names(StringUtils.bytes("fake_column_"));
-           
-            Map<String, List<Column>> results = keyspace.multigetSlice(keySet, columnParent, sp);            
+            RangeSlicesQuery<String, String, String> rangeSlicesQuery = 
+                HFactory.createRangeSlicesQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
+            rangeSlicesQuery.setColumnFamily("Standard1");            
+            rangeSlicesQuery.setKeys("", "");
+            rangeSlicesQuery.setRange("", "", false, 3);
             
-            // setup slicing and predicate for the verification query
-            SliceRange sliceRange = new SliceRange(new byte[0], new byte[0], false, 3);
-            SlicePredicate slicePredicate = new SlicePredicate();
-            slicePredicate.setSlice_range(sliceRange);            
-            
-            // setup ColumnPath with the first column for verification
-            ColumnPath verifyColumnPath = new ColumnPath("Standard1");
-            verifyColumnPath.setColumn(StringUtils.bytes("fake_column_0"));
-            
-            // what various methods look like with tombstoned data
-            for (String key : keySet) {
-                int keyNum = Integer.valueOf(key.substring(9));
+            rangeSlicesQuery.setRowCount(10);
+            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            OrderedRows<String, String, String> orderedRows = result.get();
+            for (Row<String, String, String> row : orderedRows) {
+                int keyNum = Integer.valueOf(row.getKey().substring(9));
                 System.out.println("+-----------------------------------");
                 if ( keyNum % 2 == 0 ) {
-                    System.out.println("| result key:" + key + " which should have values: " + results.get(key));    
+                    System.out.println("| result key:" + row.getKey() + " which should have values: " + row.getColumnSlice());    
                 } else {
-                    System.out.println("| TOMBSTONED result key:" + key + " has values: " + results.get(key));
+                    System.out.println("| TOMBSTONED result key:" + row.getKey() + " has values: " + row.getColumnSlice());
                 }
+                SliceQuery<String, String, String> q = HFactory.createSliceQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
+                q.setColumnFamily("Standard1");
+                q.setRange("", "", false, 3);
+                q.setKey(row.getKey());
+                // try with column name first
                 
-                System.out.println("|-- called directly via get_slice, the value is: " +keyspace.getSlice(key, columnParent, slicePredicate));
+                Result<ColumnSlice<String, String>> r = q.execute();
+                System.out.println("|-- called directly via get_slice, the value is: " +r);
                 try {
-                    System.out.println("|-- try the first column via getColumn: " + keyspace.getColumn(key, verifyColumnPath));
+                    System.out.println("|-- try the first column via getColumn: " + HFactory.createColumnQuery(keyspaceOperator, 
+                            stringSerializer, stringSerializer, stringSerializer).setColumnFamily("Standard1").setKey(row.getKey()).setName("fake_column_0").execute());
                 } catch (HectorException he) {
                     System.out.println("|-- try the first column via getColumn: [a NotFoundException was caught]");
                 }
-                System.out.println("|-- verify on CLI with: get Keyspace1.Standard1['" + key + "'] ");                
+                
+                System.out.println("|-- verify on CLI with: get Keyspace1.Standard1['" + row.getKey() + "'] ");
             }
-            // 
 
-        } finally {
-            pool.releaseClient(keyspace.getClient());
+
+        } catch (HectorException he) {
+            he.printStackTrace();
         }
-        */
+
     }
 }

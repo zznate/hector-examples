@@ -1,22 +1,14 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.ColumnQuery;
 import me.prettyprint.cassandra.model.HColumn;
-import me.prettyprint.cassandra.model.HFactory;
 import me.prettyprint.cassandra.model.HectorException;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.Mutator;
 import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
 import me.prettyprint.cassandra.service.Cluster;
-import me.prettyprint.cassandra.service.Keyspace;
-import me.prettyprint.cassandra.utils.StringUtils;
-
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnPath;
+import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.query.ColumnQuery;
 
 /**
  * Inserts the value "John" under the Column "first" for the 

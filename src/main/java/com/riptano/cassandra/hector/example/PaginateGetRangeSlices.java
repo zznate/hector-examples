@@ -1,10 +1,5 @@
 package com.riptano.cassandra.hector.example;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-
-import me.prettyprint.cassandra.model.HFactory;
 import me.prettyprint.cassandra.model.HectorException;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.Mutator;
@@ -13,8 +8,8 @@ import me.prettyprint.cassandra.model.RangeSlicesQuery;
 import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.model.Row;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.factory.HFactory;
 
 /**
  * A simple example showing what it takes to page over results using
@@ -56,14 +51,14 @@ public class PaginateGetRangeSlices {
             Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
             OrderedRows<String, String, String> orderedRows = result.get();
             
-            List<Row<String,String,String>> rows = new ArrayList<Row<String,String,String>>(orderedRows.getList());
-            Row<String,String,String> lastRow = new ArrayDeque<Row<String,String,String>>(rows).peekLast();
-            rows.remove(lastRow);
+            
+            Row<String,String,String> lastRow = orderedRows.peekLast();
+
             System.out.println("Contents of rows: \n");                       
-            for (Row<String, String, String> r : rows) {
+            for (Row<String, String, String> r : orderedRows) {
                 System.out.println("   " + r);
             }
-            System.out.println("Should have 10 rows: " + rows.size());
+            System.out.println("Should have 11 rows: " + orderedRows.getCount());
             
             rangeSlicesQuery.setKeys(lastRow.getKey(), "");
             orderedRows = rangeSlicesQuery.execute().get();
