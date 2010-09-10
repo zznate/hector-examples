@@ -89,16 +89,12 @@ public class TombstonedGetRangeSlices {
                 q.setColumnFamily("Standard1");
                 q.setRange("", "", false, 3);
                 q.setKey(row.getKey());
-                // try with column name first
                 
                 Result<ColumnSlice<String, String>> r = q.execute();
                 System.out.println("|-- called directly via get_slice, the value is: " +r);
-                try {
-                    System.out.println("|-- try the first column via getColumn: " + HFactory.createColumnQuery(keyspaceOperator, 
-                            stringSerializer, stringSerializer, stringSerializer).setColumnFamily("Standard1").setKey(row.getKey()).setName("fake_column_0").execute());
-                } catch (HectorException he) {
-                    System.out.println("|-- try the first column via getColumn: [a NotFoundException was caught]");
-                }
+                // For a tombstone, you just get a null back from ColumnQuery
+                System.out.println("|-- try the first column via getColumn: " + HFactory.createColumnQuery(keyspaceOperator, 
+                        stringSerializer, stringSerializer, stringSerializer).setColumnFamily("Standard1").setKey(row.getKey()).setName("fake_column_0").execute());
                 
                 System.out.println("|-- verify on CLI with: get Keyspace1.Standard1['" + row.getKey() + "'] ");
             }
