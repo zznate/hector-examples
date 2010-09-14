@@ -1,5 +1,6 @@
 package com.riptano.cassandra.hector.example;
 
+import me.prettyprint.cassandra.model.HColumn;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.MutationResult;
 import me.prettyprint.cassandra.model.Mutator;
@@ -10,6 +11,7 @@ import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.Cluster;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.query.ColumnQuery;
 
 /**
  * Shows off the new ExecutionResult hierarchy  
@@ -47,7 +49,14 @@ public class ResultDetailsDemo {
             
             rangeSlicesQuery.setRowCount(10);
             Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
-            System.out.println("Result from rangeSlices query: " + result.toString());            
+            System.out.println("Result from rangeSlices query: " + result.toString());   
+            
+            ColumnQuery<String, String, String> columnQuery = HFactory.createStringColumnQuery(keyspaceOperator);
+            columnQuery.setColumnFamily("Standard1").setKey("fake_key_0").setName("fake_column_0");
+            Result<HColumn<String, String>> colResult = columnQuery.execute();
+            System.out.println("Execution time: " + colResult.getExecutionTimeMicro());
+            System.out.println("CassandraHost used: " + colResult.getHostUsed());
+            System.out.println("Query Execute: " + colResult.getQuery());
             
         } catch (HectorException he) {
             he.printStackTrace();
