@@ -1,13 +1,6 @@
 package com.riptano.cassandra.hector.example;
 
-import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import me.prettyprint.cassandra.model.ColumnSlice;
-import me.prettyprint.cassandra.model.HectorException;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.Mutator;
 import me.prettyprint.cassandra.model.OrderedRows;
@@ -16,19 +9,9 @@ import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.model.Row;
 import me.prettyprint.cassandra.model.SliceQuery;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
 import me.prettyprint.cassandra.service.Cluster;
-import me.prettyprint.cassandra.service.Keyspace;
-import me.prettyprint.cassandra.utils.StringUtils;
+import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
-
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.thrift.ColumnPath;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
 
 /**
  * Shows what tombstoned data looks like in the result sets of 

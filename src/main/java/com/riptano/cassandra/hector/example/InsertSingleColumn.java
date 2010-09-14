@@ -1,12 +1,12 @@
 package com.riptano.cassandra.hector.example;
 
 import me.prettyprint.cassandra.model.HColumn;
-import me.prettyprint.cassandra.model.HectorException;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.Mutator;
 import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.query.ColumnQuery;
 
@@ -33,10 +33,9 @@ public class InsertSingleColumn {
             mutator.insert("jsmith", "Standard1", HFactory.createStringColumn("first", "John"));
             
             ColumnQuery<String, String, String> columnQuery = HFactory.createStringColumnQuery(keyspaceOperator);
-            columnQuery.setColumnFamily("Standard1");
-            columnQuery.setKey("jsmith");
-            columnQuery.setName("first");
+            columnQuery.setColumnFamily("Standard1").setKey("jsmith").setName("first");
             Result<HColumn<String, String>> result = columnQuery.execute();
+            
             System.out.println("Read HColumn from cassandra: " + result.get());            
             System.out.println("Verify on CLI with:  get Keyspace1.Standard1['jsmith'] ");
             

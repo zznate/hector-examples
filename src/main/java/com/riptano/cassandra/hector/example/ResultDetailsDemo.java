@@ -1,6 +1,5 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.HectorException;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.MutationResult;
 import me.prettyprint.cassandra.model.Mutator;
@@ -9,6 +8,7 @@ import me.prettyprint.cassandra.model.RangeSlicesQuery;
 import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
 
 /**
