@@ -36,7 +36,7 @@ public class DeleteBatchMutate {
         CassandraClient client = cluster.borrowClient();
         Keyspace keyspace = client.getKeyspace("Keyspace1");
         try {
-            Clock clock = keyspace.createClock();
+            Clock clock = new Clock(keyspace.createClock());
             Column columnFirst = new Column(StringUtils.bytes("first"),
                     StringUtils.bytes("John"),
                     clock);
@@ -64,7 +64,7 @@ public class DeleteBatchMutate {
             // re-init the BatchMutation for deletion
             batchMutation = new BatchMutation<String>(stringSerializer);
             
-            Deletion deletion = new Deletion(keyspace.createClock());
+            Deletion deletion = new Deletion(new Clock(keyspace.createClock()));
             deletion.setPredicate(slicePredicate);            
             
                         

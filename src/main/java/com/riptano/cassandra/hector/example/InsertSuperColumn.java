@@ -44,11 +44,13 @@ public class InsertSuperColumn {
         KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
-            mutator.insert("billing", "Super1", HFactory.createSuperColumn("jsmith", Arrays.asList(HFactory.createStringColumn("first", "John")), 
+            mutator.insert("billing", "Super1", HFactory.createSuperColumn("jsmith", 
+                    Arrays.asList(HFactory.createStringColumn("first", "John")), 
                     stringSerializer, stringSerializer, stringSerializer));
             
             SuperColumnQuery<String, String, String, String> superColumnQuery = 
-                HFactory.createSuperColumnQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer, stringSerializer);
+                HFactory.createSuperColumnQuery(keyspaceOperator, stringSerializer, stringSerializer, 
+                        stringSerializer, stringSerializer);
             superColumnQuery.setColumnFamily("Super1").setKey("billing").setSuperName("jsmith");
 
             Result<HSuperColumn<String, String, String>> result = superColumnQuery.execute();
