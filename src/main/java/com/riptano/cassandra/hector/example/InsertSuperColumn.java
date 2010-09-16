@@ -1,12 +1,24 @@
 package com.riptano.cassandra.hector.example;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
+import me.prettyprint.cassandra.model.HColumn;
+import me.prettyprint.cassandra.model.HSuperColumn;
+import me.prettyprint.cassandra.model.KeyspaceOperator;
+import me.prettyprint.cassandra.model.Mutator;
+import me.prettyprint.cassandra.model.Result;
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
+import me.prettyprint.cassandra.service.Cluster;
 import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
+import me.prettyprint.hector.api.exceptions.HectorException;
+import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.query.ColumnQuery;
+import me.prettyprint.hector.api.query.SuperColumnQuery;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnPath;
@@ -22,34 +34,31 @@ import org.apache.cassandra.thrift.SuperColumn;
  *
  */
 public class InsertSuperColumn {
+    
+    private static StringSerializer stringSerializer = StringSerializer.get();
+    
     public static void main(String[] args) throws Exception {
         
-        CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
-        CassandraClient client = pool.borrowClient("localhost", 9160);
-        Keyspace keyspace = null;
-        try {
-            keyspace = client.getKeyspace("Keyspace1");
-            
-            ColumnPath columnPath = new ColumnPath("Super1");
-            columnPath.setColumn(StringUtils.bytes("first"));
-            columnPath.setSuper_column(StringUtils.bytes("jsmith"));
-            keyspace.insert("billing", columnPath, StringUtils.bytes("John"));            
-                        
-            SuperColumn sc = keyspace.getSuperColumn("billing", columnPath);            
-            Iterator<Column> columnIterator = sc.getColumnsIterator();
-            
-            while(columnIterator.hasNext()) {
-                Column column = columnIterator.next();
-                System.out.println("Read from cassandra: sc: "
-                        + StringUtils.string(sc.getName())
-                        + " col:" 
-                        + StringUtils.string(column.getName()) 
-                        + " val:" + StringUtils.string(column.getValue()));
-            }
-            System.out.println("Verify on CLI with:  get Keyspace1.Super1['billing']['jsmith'] ");
+        Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        } finally {
-            pool.releaseClient(keyspace.getClient());
-        }
+        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        try {
+            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
+            mutator.insert("billing", "Super1", HFactory.createSuperColumn("jsmith", Arrays.asList(HFactory.createStringColumn("first", "John")), 
+                    stringSerializer, stringSerializer, stringSerializer));
+            
+            SuperColumnQuery<String, String, String, String> superColumnQuery = 
+                HFactory.createSuperColumnQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer, stringSerializer);
+            superColumnQuery.setColumnFamily("Super1").setKey("billing").setSuperName("jsmith");
+
+            Result<HSuperColumn<String, String, String>> result = superColumnQuery.execute();
+
+            System.out.println("Read HSuperColumn from cassandra: " + result.get());            
+            System.out.println("Verify on CLI with:  get Keyspace1.Super1['billing']['jsmith'] ");
+            
+        } catch (HectorException e) {
+            e.printStackTrace();
+        } 
+
     }
 }

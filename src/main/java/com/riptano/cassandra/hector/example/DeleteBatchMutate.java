@@ -3,12 +3,9 @@ package com.riptano.cassandra.hector.example;
 import java.util.Arrays;
 import java.util.List;
 
-import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.BatchMutation;
 import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
 import me.prettyprint.cassandra.service.Cluster;
 import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
@@ -17,7 +14,6 @@ import me.prettyprint.hector.api.factory.HFactory;
 import org.apache.cassandra.thrift.Clock;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.Deletion;
 import org.apache.cassandra.thrift.SlicePredicate;
 

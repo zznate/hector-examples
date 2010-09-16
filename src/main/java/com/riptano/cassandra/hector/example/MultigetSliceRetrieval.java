@@ -3,8 +3,6 @@ package com.riptano.cassandra.hector.example;
 import me.prettyprint.cassandra.model.KeyspaceOperator;
 import me.prettyprint.cassandra.model.MultigetSliceQuery;
 import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.RangeSlicesQuery;
 import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.model.Row;
 import me.prettyprint.cassandra.model.Rows;
@@ -46,7 +44,6 @@ public class MultigetSliceRetrieval {
                 HFactory.createMultigetSliceQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
             multigetSliceQuery.setColumnFamily("Standard1");            
             multigetSliceQuery.setKeys("fake_key_0", "fake_key_1","fake_key_2", "fake_key_3", "fake_key_4");
-            //multigetSliceQuery.setColumnNames("fake_column_0");
             multigetSliceQuery.setRange("", "", false, 3);
             System.out.println(multigetSliceQuery);
 
