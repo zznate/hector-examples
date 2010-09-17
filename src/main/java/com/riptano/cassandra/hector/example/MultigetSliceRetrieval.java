@@ -44,7 +44,8 @@ public class MultigetSliceRetrieval {
                 HFactory.createMultigetSliceQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
             multigetSliceQuery.setColumnFamily("Standard1");            
             multigetSliceQuery.setKeys("fake_key_0", "fake_key_1","fake_key_2", "fake_key_3", "fake_key_4");
-            multigetSliceQuery.setRange("", "", false, 3);
+            // set null range for empty byte[] on the underlying predicate
+            multigetSliceQuery.setRange(null, null, false, 3);
             System.out.println(multigetSliceQuery);
 
             Result<Rows<String, String, String>> result = multigetSliceQuery.execute();
