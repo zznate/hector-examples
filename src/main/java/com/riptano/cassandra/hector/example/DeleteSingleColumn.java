@@ -3,7 +3,7 @@ package com.riptano.cassandra.hector.example;
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
-import me.prettyprint.cassandra.service.Keyspace;
+import me.prettyprint.cassandra.service.KeyspaceService;
 import me.prettyprint.cassandra.utils.StringUtils;
 
 import org.apache.cassandra.thrift.ColumnPath;
@@ -22,7 +22,7 @@ public class DeleteSingleColumn {
         
         CassandraClientPool pool = CassandraClientPoolFactory.INSTANCE.get();
         CassandraClient client = pool.borrowClient("localhost", 9160);
-        Keyspace keyspace = null;
+        KeyspaceService keyspace = null;
         try {
             keyspace = client.getKeyspace("Keyspace1");
             ColumnPath columnPath = new ColumnPath("Standard1");

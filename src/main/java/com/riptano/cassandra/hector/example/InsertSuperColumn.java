@@ -3,21 +3,20 @@ package com.riptano.cassandra.hector.example;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import me.prettyprint.cassandra.model.HColumn;
-import me.prettyprint.cassandra.model.HSuperColumn;
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.Result;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
-import me.prettyprint.cassandra.service.Cluster;
-import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.utils.StringUtils;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.HSuperColumn;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.ColumnQuery;
+import me.prettyprint.hector.api.query.QueryResult;
 import me.prettyprint.hector.api.query.SuperColumnQuery;
 
 import org.apache.cassandra.thrift.Column;
@@ -41,7 +40,7 @@ public class InsertSuperColumn {
         
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
             mutator.insert("billing", "Super1", HFactory.createSuperColumn("jsmith", 
@@ -53,7 +52,7 @@ public class InsertSuperColumn {
                         stringSerializer, stringSerializer);
             superColumnQuery.setColumnFamily("Super1").setKey("billing").setSuperName("jsmith");
 
-            Result<HSuperColumn<String, String, String>> result = superColumnQuery.execute();
+            QueryResult<HSuperColumn<String, String, String>> result = superColumnQuery.execute();
 
             System.out.println("Read HSuperColumn from cassandra: " + result.get());            
             System.out.println("Verify on CLI with:  get Keyspace1.Super1['billing']['jsmith'] ");

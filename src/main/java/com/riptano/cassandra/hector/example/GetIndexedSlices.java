@@ -1,15 +1,15 @@
 package com.riptano.cassandra.hector.example;
 
 import me.prettyprint.cassandra.model.IndexedSlicesQuery;
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.Result;
 import me.prettyprint.cassandra.serializers.LongSerializer;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.OrderedRows;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.QueryResult;
 
 /**
  * Shows off the usage of the shiny new Column indexing feature via
@@ -29,10 +29,10 @@ public class GetIndexedSlices {
         
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspace = HFactory.createKeyspace("Keyspace1", cluster);
                 
         try {
-            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
+            Mutator<String> mutator = HFactory.createMutator(keyspace, stringSerializer);
             
             for (int i = 0; i < 20; i++) {            
                 mutator.addInsertion("fake_key_" + i, "Indexed1", HFactory.createStringColumn("fake_column_0", "fake_value_0_" + i))
@@ -43,13 +43,13 @@ public class GetIndexedSlices {
             mutator.execute();
      
             IndexedSlicesQuery<String, String, Long> indexedSlicesQuery = 
-                HFactory.createIndexedSlicesQuery(keyspaceOperator, stringSerializer, stringSerializer, LongSerializer.get());
+                HFactory.createIndexedSlicesQuery(keyspace, stringSerializer, stringSerializer, LongSerializer.get());
             indexedSlicesQuery.addEqualsExpression("birthdate", 4L);
             indexedSlicesQuery.setColumnNames("birthdate","fake_column_0");
             indexedSlicesQuery.setColumnFamily("Indexed1");
             indexedSlicesQuery.setStartKey("");
             
-            Result<OrderedRows<String, String, Long>> result = indexedSlicesQuery.execute();
+            QueryResult<OrderedRows<String, String, Long>> result = indexedSlicesQuery.execute();
             
             System.out.println("The results should only have 4 entries: " + result.get());
             

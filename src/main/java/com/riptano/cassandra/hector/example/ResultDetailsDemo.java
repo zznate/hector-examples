@@ -1,17 +1,18 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.HColumn;
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.MutationResult;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.RangeSlicesQuery;
-import me.prettyprint.cassandra.model.Result;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.OrderedRows;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.MutationResult;
+import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.ColumnQuery;
+import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.RangeSlicesQuery;
 
 /**
  * Shows off the new ExecutionResult hierarchy  
@@ -29,7 +30,7 @@ public class ResultDetailsDemo {
     public static void main(String[] args) throws Exception {
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
             // add 10 rows
@@ -48,12 +49,12 @@ public class ResultDetailsDemo {
             rangeSlicesQuery.setRange("", "", false, 3);
             
             rangeSlicesQuery.setRowCount(10);
-            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
             System.out.println("Result from rangeSlices query: " + result.toString());   
             
             ColumnQuery<String, String, String> columnQuery = HFactory.createStringColumnQuery(keyspaceOperator);
             columnQuery.setColumnFamily("Standard1").setKey("fake_key_0").setName("fake_column_0");
-            Result<HColumn<String, String>> colResult = columnQuery.execute();
+            QueryResult<HColumn<String, String>> colResult = columnQuery.execute();
             System.out.println("Execution time: " + colResult.getExecutionTimeMicro());
             System.out.println("CassandraHost used: " + colResult.getHostUsed());
             System.out.println("Query Execute: " + colResult.getQuery());

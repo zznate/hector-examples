@@ -6,9 +6,10 @@ import java.util.List;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.BatchMutation;
 import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.Cluster;
-import me.prettyprint.cassandra.service.Keyspace;
+import me.prettyprint.cassandra.service.KeyspaceService;
 import me.prettyprint.cassandra.utils.StringUtils;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
 import me.prettyprint.hector.api.factory.HFactory;
 
 import org.apache.cassandra.thrift.Clock;
@@ -34,7 +35,7 @@ public class DeleteBatchMutate {
         
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
         CassandraClient client = cluster.borrowClient();
-        Keyspace keyspace = client.getKeyspace("Keyspace1");
+        KeyspaceService keyspace = client.getKeyspace("Keyspace1");
         try {
             Clock clock = new Clock(keyspace.createClock());
             Column columnFirst = new Column(StringUtils.bytes("first"),

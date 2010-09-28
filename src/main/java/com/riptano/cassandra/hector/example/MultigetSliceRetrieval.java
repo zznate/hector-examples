@@ -1,15 +1,16 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.MultigetSliceQuery;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.Result;
-import me.prettyprint.cassandra.model.Row;
-import me.prettyprint.cassandra.model.Rows;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.Row;
+import me.prettyprint.hector.api.beans.Rows;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.MultigetSliceQuery;
+import me.prettyprint.hector.api.query.QueryResult;
 
 /**
  * Use MultigetSliceQuery when you want to get the same columns from a known set of keys
@@ -28,7 +29,7 @@ public class MultigetSliceRetrieval {
 
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
 
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
@@ -48,7 +49,7 @@ public class MultigetSliceRetrieval {
             multigetSliceQuery.setRange(null, null, false, 3);
             System.out.println(multigetSliceQuery);
 
-            Result<Rows<String, String, String>> result = multigetSliceQuery.execute();
+            QueryResult<Rows<String, String, String>> result = multigetSliceQuery.execute();
             Rows<String, String, String> orderedRows = result.get();
            
             System.out.println("Contents of rows: \n");                       

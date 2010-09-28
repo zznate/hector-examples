@@ -1,17 +1,18 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.ColumnSlice;
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.RangeSlicesQuery;
-import me.prettyprint.cassandra.model.Result;
-import me.prettyprint.cassandra.model.Row;
-import me.prettyprint.cassandra.model.SliceQuery;
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.ColumnSlice;
+import me.prettyprint.hector.api.beans.OrderedRows;
+import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.RangeSlicesQuery;
+import me.prettyprint.hector.api.query.SliceQuery;
 
 /**
  * Shows what tombstoned data looks like in the result sets of 
@@ -33,7 +34,7 @@ public class TombstonedGetRangeSlices {
     public static void main(String[] args) throws Exception {
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
             // add 10 rows
@@ -58,7 +59,7 @@ public class TombstonedGetRangeSlices {
             rangeSlicesQuery.setRange("", "", false, 3);
             
             rangeSlicesQuery.setRowCount(10);
-            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
             OrderedRows<String, String, String> orderedRows = result.get();
             for (Row<String, String, String> row : orderedRows) {
                 int keyNum = Integer.valueOf(row.getKey().substring(9));
@@ -73,7 +74,7 @@ public class TombstonedGetRangeSlices {
                 q.setRange("", "", false, 3);
                 q.setKey(row.getKey());
                 
-                Result<ColumnSlice<String, String>> r = q.execute();
+                QueryResult<ColumnSlice<String, String>> r = q.execute();
                 System.out.println("|-- called directly via get_slice, the value is: " +r);
                 // For a tombstone, you just get a null back from ColumnQuery
                 System.out.println("|-- try the first column via getColumn: " + HFactory.createColumnQuery(keyspaceOperator, 

@@ -1,15 +1,16 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.RangeSlicesQuery;
-import me.prettyprint.cassandra.model.Result;
-import me.prettyprint.cassandra.model.Row;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.OrderedRows;
+import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.RangeSlicesQuery;
 
 /**
  * Use get_range_slices to retrieve the keys without deserializing the columns.
@@ -29,7 +30,7 @@ public class GetRangeSlicesKeysOnly {
         
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
                 
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
@@ -45,10 +46,10 @@ public class GetRangeSlicesKeysOnly {
                 HFactory.createRangeSlicesQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
             rangeSlicesQuery.setColumnFamily("Standard1");            
             rangeSlicesQuery.setKeys("fake_key_", "");
-            rangeSlicesQuery.setReturnKeysOnly();
+            //rangeSlicesQuery.setReturnKeysOnly();
             
             rangeSlicesQuery.setRowCount(5);
-            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
             OrderedRows<String, String, String> orderedRows = result.get();            
             
             Row<String,String,String> lastRow = orderedRows.peekLast();

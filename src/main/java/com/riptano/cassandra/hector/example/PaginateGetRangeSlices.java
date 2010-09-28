@@ -1,15 +1,16 @@
 package com.riptano.cassandra.hector.example;
 
-import me.prettyprint.cassandra.model.KeyspaceOperator;
-import me.prettyprint.cassandra.model.Mutator;
-import me.prettyprint.cassandra.model.OrderedRows;
-import me.prettyprint.cassandra.model.RangeSlicesQuery;
-import me.prettyprint.cassandra.model.Result;
-import me.prettyprint.cassandra.model.Row;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.Cluster;
+import me.prettyprint.hector.api.Cluster;
+import me.prettyprint.hector.api.Keyspace;
+import me.prettyprint.hector.api.beans.OrderedRows;
+import me.prettyprint.hector.api.beans.Row;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
+import me.prettyprint.hector.api.mutation.Mutator;
+import me.prettyprint.hector.api.query.QueryResult;
+import me.prettyprint.hector.api.query.RangeSlicesQuery;
 
 /**
  * A simple example showing what it takes to page over results using
@@ -29,7 +30,7 @@ public class PaginateGetRangeSlices {
         
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
-        KeyspaceOperator keyspaceOperator = HFactory.createKeyspaceOperator("Keyspace1", cluster);
+        Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
                 
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
@@ -48,7 +49,7 @@ public class PaginateGetRangeSlices {
             rangeSlicesQuery.setRange("", "", false, 3);
             
             rangeSlicesQuery.setRowCount(11);
-            Result<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
+            QueryResult<OrderedRows<String, String, String>> result = rangeSlicesQuery.execute();
             OrderedRows<String, String, String> orderedRows = result.get();
             
             
