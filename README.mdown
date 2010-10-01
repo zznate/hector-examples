@@ -25,6 +25,6 @@ Mail List: hector-users@googlegroups.com
 
 Hector Wiki: http://wiki.github.com/rantav/hector/
 
-Hector Doc at Riptano: http://www.riptano.com/sites/default/files/hector-api-for-cassandra.pdf
+Hector Doc at Riptano: http://www.riptano.com/sites/default/files/hector-v2-client-doc.pdf
 
-
+This software is designed solely for demonstartion purposes of basic capabilities regarding the Hector client API for Apache Cassandra. It is available under an MIT license (see LICENSE for details). Use at your own risk.
