@@ -1,6 +1,8 @@
 package com.riptano.cassandra.hector.example;
 
 
+import java.util.ArrayList;
+
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
@@ -40,11 +42,12 @@ public class MultigetSliceRetrieval {
                 .addInsertion("fake_key_" + i, "Standard1", HFactory.createStringColumn("fake_column_2", "fake_value_2_" + i));            
             }
             mutator.execute();
-
+            
             MultigetSliceQuery<String, String, String> multigetSliceQuery = 
                 HFactory.createMultigetSliceQuery(keyspaceOperator, stringSerializer, stringSerializer, stringSerializer);
             multigetSliceQuery.setColumnFamily("Standard1");            
             multigetSliceQuery.setKeys("fake_key_0", "fake_key_1","fake_key_2", "fake_key_3", "fake_key_4");
+
             // set null range for empty byte[] on the underlying predicate
             multigetSliceQuery.setRange(null, null, false, 3);
             System.out.println(multigetSliceQuery);

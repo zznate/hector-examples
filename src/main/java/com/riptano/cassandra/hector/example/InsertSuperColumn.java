@@ -5,9 +5,6 @@ import java.util.Iterator;
 
 
 import me.prettyprint.cassandra.serializers.StringSerializer;
-import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
 import me.prettyprint.cassandra.utils.StringUtils;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.Keyspace;
@@ -41,6 +38,7 @@ public class InsertSuperColumn {
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
 
         Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
+        
         try {
             Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
             mutator.insert("billing", "Super1", HFactory.createSuperColumn("jsmith", 
@@ -60,6 +58,7 @@ public class InsertSuperColumn {
         } catch (HectorException e) {
             e.printStackTrace();
         } 
+        
 
     }
 }

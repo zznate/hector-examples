@@ -30,7 +30,7 @@ public class InsertSingleColumn {
 
         Keyspace keyspaceOperator = HFactory.createKeyspace("Keyspace1", cluster);
         try {
-            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, stringSerializer);
+            Mutator<String> mutator = HFactory.createMutator(keyspaceOperator, StringSerializer.get());
             mutator.insert("jsmith", "Standard1", HFactory.createStringColumn("first", "John"));
             
             ColumnQuery<String, String, String> columnQuery = HFactory.createStringColumnQuery(keyspaceOperator);
