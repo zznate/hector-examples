@@ -58,7 +58,7 @@ public class InsertSuperColumn {
         } catch (HectorException e) {
             e.printStackTrace();
         } 
-        
+        cluster.getConnectionManager().shutdown();  
 
     }
 }

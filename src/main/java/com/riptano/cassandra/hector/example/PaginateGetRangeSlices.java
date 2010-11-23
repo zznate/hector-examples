@@ -72,6 +72,7 @@ public class PaginateGetRangeSlices {
         } catch (HectorException he) {
             he.printStackTrace();
         }
+        cluster.getConnectionManager().shutdown();
     }
 
 }

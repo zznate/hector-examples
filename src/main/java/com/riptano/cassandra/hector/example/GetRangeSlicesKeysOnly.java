@@ -63,6 +63,7 @@ public class GetRangeSlicesKeysOnly {
         } catch (HectorException he) {
             he.printStackTrace();
         }
+        cluster.getConnectionManager().shutdown();
     }
         
 }

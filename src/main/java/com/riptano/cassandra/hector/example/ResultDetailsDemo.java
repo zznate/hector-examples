@@ -62,5 +62,6 @@ public class ResultDetailsDemo {
         } catch (HectorException he) {
             he.printStackTrace();
         }
+        cluster.getConnectionManager().shutdown();
     }
 }

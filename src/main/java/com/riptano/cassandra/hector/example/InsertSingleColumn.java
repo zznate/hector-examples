@@ -42,6 +42,8 @@ public class InsertSingleColumn {
             
         } catch (HectorException e) {
             e.printStackTrace();
-        } 
+        }
+        cluster.getConnectionManager().shutdown();
     }
+    
 }

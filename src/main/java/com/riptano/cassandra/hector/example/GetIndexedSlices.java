@@ -56,5 +56,6 @@ public class GetIndexedSlices {
         } catch (HectorException he) {
             he.printStackTrace();
         }
+        cluster.getConnectionManager().shutdown(); 
     }
 }

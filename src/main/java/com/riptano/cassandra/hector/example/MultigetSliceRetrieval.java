@@ -65,6 +65,7 @@ public class MultigetSliceRetrieval {
         } catch (HectorException he) {
             he.printStackTrace();
         }
+        cluster.getConnectionManager().shutdown();        
     }
 
 }

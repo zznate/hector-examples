@@ -87,6 +87,6 @@ public class TombstonedGetRangeSlices {
         } catch (HectorException he) {
             he.printStackTrace();
         }
-
+        cluster.getConnectionManager().shutdown();
     }
 }
