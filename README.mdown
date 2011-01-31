@@ -1,6 +1,6 @@
 Overview
 ============
-Provides example classes for using Hector to access Apache Cassandra (0.7.0-beta1).
+Provides example classes for using Hector to access Apache Cassandra (0.7.0).
 These examples were inspired by the same questions appearing reapeatedly on: 
 hector-users@googlegroups.com from users with a big variance in skill level. 
 
@@ -17,7 +17,8 @@ Each class can be directly executed via maven like so:
 
 mvn -e exec:java -Dexec.mainClass="com.riptano.cassandra.hector.example.[class name]"
 
-These classes assume you have an instance of Cassandra running on localhost:9160 with the default configuration. 
+These classes assume you have an instance of Cassandra running on localhost:9160 with the default configuration. If this is one of the first times you have started Apache Cassandra, make sure you have loaded the default schema: http://wiki.apache.org/cassandra/LiveSchemaUpdates
+
 
 Additional Sources of Information
 ----------------------------------
