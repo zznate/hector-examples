@@ -1,5 +1,10 @@
 Overview
 ============
+Note: though useful, this project has been largely superceeded by:
+
+https://github.com/zznate/cassandra-tutorial
+
+
 Provides example classes for using Hector to access Apache Cassandra (0.7.0).
 These examples were inspired by the same questions appearing reapeatedly on: 
 hector-users@googlegroups.com from users with a big variance in skill level. 
