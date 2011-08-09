@@ -11,6 +11,7 @@ import me.prettyprint.cassandra.service.ThriftKsDef;
 import me.prettyprint.hector.api.Cluster;
 import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition;
 import me.prettyprint.hector.api.ddl.ColumnIndexType;
+import me.prettyprint.hector.api.ddl.ColumnType;
 import me.prettyprint.hector.api.ddl.ComparatorType;
 import me.prettyprint.hector.api.ddl.KeyspaceDefinition;
 import me.prettyprint.hector.api.exceptions.HectorException;
@@ -31,6 +32,7 @@ public class SchemaManipulation {
     
     private static final String DYN_KEYSPACE = "DynamicKeyspace";
     private static final String DYN_CF = "DynamicCf";
+    private static final String CF_SUPER = "SuperCf";
     
     private static StringSerializer stringSerializer = StringSerializer.get();
     
@@ -39,7 +41,9 @@ public class SchemaManipulation {
         Cluster cluster = HFactory.getOrCreateCluster("TestCluster", "localhost:9160");
                 
         try {
-            cluster.dropKeyspace(DYN_KEYSPACE);
+            if ( cluster.describeKeyspace(DYN_KEYSPACE) != null ) {
+              cluster.dropKeyspace(DYN_KEYSPACE);
+            }
             
             BasicColumnDefinition columnDefinition = new BasicColumnDefinition();
             columnDefinition.setName(stringSerializer.toByteBuffer("birthdate"));
@@ -51,10 +55,19 @@ public class SchemaManipulation {
             columnFamilyDefinition.setName(DYN_CF);
             columnFamilyDefinition.addColumnDefinition(columnDefinition);
             
-            ColumnFamilyDefinition cfDef = new ThriftCfDef(columnFamilyDefinition);
+            BasicColumnFamilyDefinition superCfDefinition = new BasicColumnFamilyDefinition();
+            superCfDefinition.setKeyspaceName(DYN_KEYSPACE);
+            superCfDefinition.setName(CF_SUPER);
+            superCfDefinition.setColumnType(ColumnType.SUPER);
+            
+            
+            
+            ColumnFamilyDefinition cfDefStandard = new ThriftCfDef(columnFamilyDefinition);
+            ColumnFamilyDefinition cfDefSuper = new ThriftCfDef(superCfDefinition);
             
             KeyspaceDefinition keyspaceDefinition = 
-                HFactory.createKeyspaceDefinition(DYN_KEYSPACE, "org.apache.cassandra.locator.SimpleStrategy", 1, Arrays.asList(cfDef));
+                HFactory.createKeyspaceDefinition(DYN_KEYSPACE, "org.apache.cassandra.locator.SimpleStrategy", 
+                    1, Arrays.asList(cfDefStandard, cfDefSuper));
                                                
             cluster.addKeyspace(keyspaceDefinition);
             
@@ -67,10 +80,14 @@ public class SchemaManipulation {
                     System.out.println("RF: " +kd.getReplicationFactor());
                     System.out.println("strategy class: " +kd.getStrategyClass());
                     List<ColumnFamilyDefinition> cfDefs = kd.getCfDefs();
-                    ColumnFamilyDefinition def = cfDefs.get(0);
-                    System.out.println("  CF Name: " +def.getName());
-                    System.out.println("  CF Metadata: " +def.getColumnMetadata());
-                }
+                    for (ColumnFamilyDefinition def : cfDefs) {
+                      System.out.println("  CF Type: " +def.getColumnType());
+                      System.out.println("  CF Name: " +def.getName());
+                      System.out.println("  CF Metadata: " +def.getColumnMetadata());  
+                    }
+                    
+                    
+                } 
             }
             
             
