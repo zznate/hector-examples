@@ -7,13 +7,8 @@ import me.prettyprint.cassandra.model.BasicColumnDefinition;
 import me.prettyprint.cassandra.model.BasicColumnFamilyDefinition;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.service.ThriftCfDef;
-import me.prettyprint.cassandra.service.ThriftKsDef;
 import me.prettyprint.hector.api.Cluster;
-import me.prettyprint.hector.api.ddl.ColumnFamilyDefinition;
-import me.prettyprint.hector.api.ddl.ColumnIndexType;
-import me.prettyprint.hector.api.ddl.ColumnType;
-import me.prettyprint.hector.api.ddl.ComparatorType;
-import me.prettyprint.hector.api.ddl.KeyspaceDefinition;
+import me.prettyprint.hector.api.ddl.*;
 import me.prettyprint.hector.api.exceptions.HectorException;
 import me.prettyprint.hector.api.factory.HFactory;
 
@@ -47,6 +42,7 @@ public class SchemaManipulation {
             
             BasicColumnDefinition columnDefinition = new BasicColumnDefinition();
             columnDefinition.setName(stringSerializer.toByteBuffer("birthdate"));
+            columnDefinition.setIndexName("birthdate_idx");
             columnDefinition.setIndexType(ColumnIndexType.KEYS);
             columnDefinition.setValidationClass(ComparatorType.LONGTYPE.getClassName());
             
